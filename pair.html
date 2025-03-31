@@ -1,0 +1,147 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PAIR CODE</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: url("https://i.postimg.cc/NjymQz1X/VOX-MD-BOT-LOGO.jpg") no-repeat center center/cover;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+h3 {
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.input-container {
+  display: flex;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 5px;
+}
+
+.input-container input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #fff;
+  font-size: 16px;
+}
+
+.input-container input::placeholder {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.input-container button {
+  padding: 10px 15px;
+  border: none;
+  background: #0004ff;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.input-container button:hover {
+  background: #32CD32;
+}
+
+#loading-spinner {
+  display: none;
+  margin-top: 10px;
+  color: white;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.fa-spinner {
+  animation: spin 2s linear infinite;
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h3>BELLAH XMD PAIR</h3>
+    <p style="color: white;">Enter number starting with country code.</p>
+    <div class="input-container">
+      <input type="number" id="number" placeholder="254114148625">
+      <button id="submit">Submit</button>
+    </div>
+    <div id="loading-spinner">
+      <i class="fas fa-spinner fa-spin"></i>
+    </div>
+    <p id="pair" style="color: white; margin-top: 10px;"></p>
+  </div>  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js"></script>  <script>
+    document.getElementById("submit").addEventListener("click", async (e) => {
+      e.preventDefault();
+      let input = document.getElementById("number");
+      let output = document.getElementById("pair");
+      let spinner = document.getElementById("loading-spinner");
+
+      if (!input.value) {
+        output.innerHTML = '<span style="color:red;">Enter your WhatsApp number with country code.</span>';
+        return;
+      }
+
+      let number = input.value.replace(/[^0-9]/g, "");
+      if (number.length < 11) {
+        output.innerHTML = '<span style="color:red;">Invalid number format. Try again.</span>';
+        return;
+      }
+
+      input.value = "+" + number;
+      spinner.style.display = "block";
+      output.innerHTML = "";
+
+      try {
+        let { data } = await axios(`/code?number=${number}`);
+        let code = data.code || "Service Unavailable";
+        output.innerHTML = `<span style="color:yellow; font-weight:bold; cursor:pointer;" onclick="copyCode(this)">CODE: ${code}</span>`;
+      } catch (error) {
+        output.innerHTML = '<span style="color:red;">Error retrieving code.</span>';
+      }
+      spinner.style.display = "none";
+    });
+
+    function copyCode(element) {
+      navigator.clipboard.writeText(element.innerText.replace('CODE: ', ''));
+      element.innerText = "BELLAH XMD CODE COPIED";
+      element.style.color = "red";
+      setTimeout(() => {
+        element.innerText = "CODE: " + element.innerText.replace('BELLAH XMD CODE COPIED', '');
+        element.style.color = "yellow";
+      }, 1000);
+    }
+  </script></body>
+</html>
